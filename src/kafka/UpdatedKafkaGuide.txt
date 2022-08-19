@@ -1,0 +1,26 @@
+1. Install Kafka via https://kafka.apache.org/downloads
+
+2. Extract download: (tar -xzf kafka_2.13-3.0.tgz <— Or whatever version you downloaded)
+
+3. Navigate to folder
+
+3. Run “sh bin/zookeeper-server-start.sh config/zookeeper.properties” to start ZooKeeper (used for cluster management).
+    May need to run “./gradlew jar -PscalaVersion=2.13.6” first
+
+5. Open another terminal session and run “bin/kafka-server-start.sh config/server.properties”
+
+6. Create a topic named 'my-topic' by opening another terminal session and run
+    "bin/kafka-topics.sh --create --replication-factor 1 --partitions 10 --topic my-topic --bootstrap-server localhost:9092” <- The number of
+    replicators/partitions and the name of the topic can be changed.
+
+7. Create another topic named 'my-topic-output' by opening another terminal session and run
+    "bin/kafka-topics.sh --create --replication-factor 1 --partitions 1 --topic my-topic-output --bootstrap-server localhost:9092” <- Again, the number of
+    replicators/partitions and the name of the topic can be changed.
+
+8. Compile and run ProducerClient.java and then run App.java
+
+9. Once the ProducerClient and App programs are run, finish by running 'python consumer.py'
+
+EXTRA. Read events by opening another terminal session and run “bin/kafka-console-consumer.sh --topic <TOPIC_NAME> --from-beginning --bootstrap-server localhost:9092”
+
+EXTRA. Optionally, you can delete any data in your local Kafka environment by running “rm -rf /tmp/kafka-logs /tmp/zookeeper”

@@ -1,0 +1,10 @@
+GET /anomaly HTTP/1.1 401
+POST /anomaly HTTP/1.1 200
+POST /anomaly HTTP/1.1 201
+/anomaly HTTP/1.1
+POST /anomaly HTTP/1.1 401
+GET /anomaly HTTP/1.1 200
+GET /anomaly HTTP/1.1 200
+POST /anomaly HTTP/1.1 401
+POST /anomaly HTTP/1.1 201
+GET /anomaly HTTP/1.1 401

@@ -1,0 +1,64 @@
+- name: Capstone Project
+  hosts: localhost
+  tasks:
+    - name: Tear down existing Zookeeper and Kafka Broker images
+      community.docker.docker_compose:
+        project_src: .
+        state: absent
+
+    - name: Build Zookeeper and Kafka Broker images
+      community.docker.docker_compose:
+        project_src: .
+
+    # # Here just in case topic doesn't get removed when container stops running.
+    # - name: Remove first topic
+    #   community.docker.docker_container_exec:
+    #     container: src_kafka_1
+    #     command: kafka-topics.sh --delete --topic my-topic --bootstrap-server localhost:9092
+
+    # # Here just in case topic doesn't get removed when container stops running.
+    # - name: Remove second topic
+    #   community.docker.docker_container_exec:
+    #     container: src_kafka_1
+    #     command: kafka-topics.sh --delete --topic my-topic-output --bootstrap-server localhost:9092
+
+    - name: Create first topic
+      community.docker.docker_container_exec:
+        container: src_kafka_1
+        command: kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic my-topic
+
+    - name: Create second topic
+      community.docker.docker_container_exec:
+        container: src_kafka_1
+        command: kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic my-topic-output
+
+    - name: Build kafkaclients image
+      docker_image:
+        name: kafkaclients:latest
+        build:
+          path: ./kafka
+        source: build
+        state: present
+
+    - name: Build modelcontainer image
+      docker_image:
+        name: modelcontainer:latest
+        build:
+          path: .
+        source: build
+        state: present
+
+    - name: Run kafkaclients container
+      docker_container:
+        name: kafka_clients
+        network_mode: host
+        image: kafkaclients
+        state: started
+        detach: yes
+
+    - name: Run modelcontainer container
+      docker_container:
+        name: model_container
+        network_mode: host
+        image: modelcontainer
+        detach: yes

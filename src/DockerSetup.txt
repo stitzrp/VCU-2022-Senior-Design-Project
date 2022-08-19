@@ -1,0 +1,15 @@
+NEED TO HAVE BITNAMI KAFKA/ZOOKEEPER IMAGES PULL: "docker pull bitnami/kafka:latest"
+
+********* Run Manually *********
+1. Run "docker-compose up -d"
+2. Create First Topic "docker exec -it src_kafka_1 kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic my-topic"
+3. Create Second Topic "docker exec -it src_kafka_1 kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic my-topic-output"
+4. Build kafkaclients and modelcontainer images
+5. Run kafkaclients container "docker run -d --network=host kafkaclients:latest"
+(Optional). View Topic events "docker exec -it src_kafka_1 kafka-console-consumer.sh --topic my-topic --from-beginning --bootstrap-server localhost:9092"
+6. Run modelcontainer container "docker run -d --network=host modelcontainer:latest"
+(Optional). To stop Kafka Broker/Zookeeper, kafkaclients, and modelcontainer containers, run "./clean_up.sh"
+
+********* Run Automated Via Ansible Playbook *********
+1. Run "ansible-playbook setup.yml"
+(Optional). To stop Kafka Broker/Zookeeper, kafkaclients, and modelcontainer containers, run "./clean_up.sh"
